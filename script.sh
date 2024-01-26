@@ -34,6 +34,7 @@ echo '::group::Preparing ...'
   esac
 
   TEMP_PATH="$(mktemp -d)"
+  chmod -R o+rw "${TEMP_PATH}"
   echo "Detected ${os} running on ${arch}, will install tools in ${TEMP_PATH}"
   REVIEWDOG_PATH="${TEMP_PATH}/reviewdog"
   TRIVY_PATH="${TEMP_PATH}/trivy"
@@ -66,7 +67,6 @@ echo "::group:: Installing trivy (${INPUT_TRIVY_VERSION}) ... https://github.com
   if [[ "${os}" = "Windows" ]]; then
     unzip "${archive}"
   else
-    echo tar -xzf "${archive}"
     tar -xzf "${archive}"
   fi
   install trivy "${TRIVY_PATH}"
