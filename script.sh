@@ -60,15 +60,13 @@ echo "::group:: Installing trivy (${INPUT_TRIVY_VERSION}) ... https://github.com
   # Echo url for testing
   echo "Downloading ${url}"
 
-  echo curl --silent --show-error --fail \
-    --location "${url}" \
-    --output "${archive}"
   curl --silent --show-error --fail \
     --location "${url}" \
     --output "${archive}"
   if [[ "${os}" = "Windows" ]]; then
     unzip "${archive}"
   else
+    echo tar -xzf "${archive}"
     tar -xzf "${archive}"
   fi
   install trivy "${TRIVY_PATH}"
