@@ -34,7 +34,7 @@ echo '::group::Preparing ...'
   esac
 
   TEMP_PATH="$(mktemp -d)"
-  chmod -R o+rw "${TEMP_PATH}"
+  chmod -R 0666 "${TEMP_PATH}"
   echo "Detected ${os} running on ${arch}, will install tools in ${TEMP_PATH}"
   REVIEWDOG_PATH="${TEMP_PATH}/reviewdog"
   TRIVY_PATH="${TEMP_PATH}/trivy"
