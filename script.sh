@@ -60,6 +60,9 @@ echo "::group:: Installing trivy (${INPUT_TRIVY_VERSION}) ... https://github.com
   # Echo url for testing
   echo "Downloading ${url}"
 
+  echo curl --silent --show-error --fail \
+    --location "${url}" \
+    --output "${archive}"
   curl --silent --show-error --fail \
     --location "${url}" \
     --output "${archive}"
