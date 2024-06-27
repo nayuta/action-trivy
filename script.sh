@@ -64,8 +64,10 @@ echo "2"
     # latest release is available on this url.
     # document: https://docs.github.com/en/repositories/releasing-projects-on-github/linking-to-releases
     latest_url="https://github.com/reviewdog/reviewdog/releases/latest/"
+echo "2.1"
     release=$(curl $latest_url -s -L -I -o /dev/null -w '%{url_effective}' | awk -F'/' '{print $NF}')
   else
+echo "2.2"
     release="${INPUT_REVIEWDOG_VERSION}"
   fi
 echo "3"
