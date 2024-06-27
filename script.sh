@@ -45,13 +45,8 @@ echo '::group::Preparing ...'
 
   TEMP_PATH="$(mktemp -d)"
   echo "Detected ${os} running on ${arch}, will install tools in ${TEMP_PATH}"
-  REVIEWDOG_PATH="${TEMP_PATH}/reviewdog"
   TRIVY_PATH="${TEMP_PATH}/trivy"
 echo '::endgroup::'
-
-# echo "::group::🐶 Installing reviewdog (${REVIEWDOG_VERSION}) ... https://github.com/reviewdog/reviewdog"
-#   curl -sfL https://raw.githubusercontent.com/reviewdog/reviewdog/master/install.sh | sh -s -- -b "${REVIEWDOG_PATH}" "${REVIEWDOG_VERSION}" 2>&1
-# echo '::endgroup::'
 
 echo "::group:: Installing trivy (${INPUT_TRIVY_VERSION}) ... https://github.com/aquasecurity/trivy"
   test ! -d "${TRIVY_PATH}" && install -d "${TRIVY_PATH}"
