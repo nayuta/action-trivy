@@ -50,7 +50,7 @@ echo '::group::Preparing ...'
   TRIVY_PATH="${TEMP_PATH}/trivy"
 echo '::endgroup::'
 
-echo "::group::🐶 Installing reviewdog (${REVIEWDOG_VERSION}) ... https://github.com/reviewdog/reviewdog"
+echo "::group::🐶 Installing reviewdog (${INPUT_REVIEWDOG_VERSION}) ... https://github.com/reviewdog/reviewdog"
   test ! -d "${REVIEWDOG_PATH}" && install -d "${REVIEWDOG_PATH}"
 
   PREV_DIR=$(pwd)
