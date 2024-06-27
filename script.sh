@@ -22,6 +22,7 @@ cd "${GITHUB_WORKSPACE}/${INPUT_WORKING_DIRECTORY}" || exit
 
 echo '::group::Preparing ...'
   unameOS="$(uname -s)"
+  echo "unameOS=${unameOS}"
   case "${unameOS}" in
     Linux*)     os=Linux;;
     Darwin*)    os=macOS;;
@@ -61,6 +62,7 @@ echo "::group:: Installing trivy (${INPUT_TRIVY_VERSION}) ... https://github.com
   cd "${TEMP_DOWNLOAD_PATH}" || exit
 
   archive="trivy.${archive_extension}"
+  echo "Downloading trivy ${INPUT_TRIVY_VERSION} for ${os} ${arch} (${archive}) ..."
   if [[ "${INPUT_TRIVY_VERSION}" = "latest" ]]; then
     # latest release is available on this url.
     # document: https://docs.github.com/en/repositories/releasing-projects-on-github/linking-to-releases
