@@ -91,7 +91,7 @@ jobs:
           fi
 
   test-check-nofilter:
-    name: trivy (github-check-without-filter)
+    name: trivy (github-check-nofilter)
     runs-on: ubuntu-latest
 
     steps:
