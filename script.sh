@@ -67,6 +67,12 @@ echo "::group::🐶 Installing reviewdog (${INPUT_REVIEWDOG_VERSION}) ... https:
     release="${INPUT_REVIEWDOG_VERSION}"
   fi
   release_num=${release/#v/}
+  case "${os}" in
+    Linux)   os="Linux";;
+    macOS)   os="Darwin";;
+    Windows) os="Windows";;
+    *)       echo "Unsupported OS: ${os}. Only Linux, macOS, and Windows are supported by the action" && exit 1
+  esac
   case "${arch}" in
     64bit) reviewdog_arch="x86_64";;
     ARM64) reviewdog_arch="arm64";;
