@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Print commands for debugging
-if [[ -n "${RUNNER_DEBUG}" && "${RUNNER_DEBUG}" = "true" ]]; then
+if [[ -n "${INPUT_RUNNER_DEBUG}" && "${INPUT_RUNNER_DEBUG}" = "true" ]]; then
   set -x
 fi
 
