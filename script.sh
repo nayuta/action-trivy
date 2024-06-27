@@ -51,7 +51,40 @@ echo '::group::Preparing ...'
 echo '::endgroup::'
 
 echo "::group::🐶 Installing reviewdog (${REVIEWDOG_VERSION}) ... https://github.com/reviewdog/reviewdog"
-  curl -sfL https://raw.githubusercontent.com/reviewdog/reviewdog/master/install.sh | sh -s -- -b "${REVIEWDOG_PATH}" "${REVIEWDOG_VERSION}" 2>&1
+  test ! -d "${REVIEWDOG_PATH}" && install -d "${REVIEWDOG_PATH}"
+
+  PREV_DIR=$(pwd)
+  TEMP_DOWNLOAD_PATH="$(mktemp -d)"
+  cd "${TEMP_DOWNLOAD_PATH}" || exit
+
+  archive="reviewdog.${archive_extension}"
+  if [[ "${INPUT_REVIEWDOG_VERSION}" = "latest" ]]; then
+    # latest release is available on this url.
+    # document: https://docs.github.com/en/repositories/releasing-projects-on-github/linking-to-releases
+    latest_url="https://github.com/reviewdog/reviewdog/releases/latest/"
+    release=$(curl $latest_url -s -L -I -o /dev/null -w '%{url_effective}' | awk -F'/' '{print $NF}')
+  else
+    release="${INPUT_REVIEWDOG_VERSION}"
+  fi
+  release_num=${release/#v/}
+  url="https://github.com/reviewdog/reviewdog/releases/download/${release}/trivy_${release_num}_${os}_${arch}.${archive_extension}"
+  echo "Downloading ${url} to ${archive}" # TODO: Remove (Echo url for testing)
+  curl --silent --show-error --fail \
+    --location "${url}" \
+    --output "${archive}"
+
+  ### TODO: Remove (TEST)
+  echo "URL: ${url}"
+  echo "ARCHIVE: ${archive}"
+  ls 
+  ### TEST END
+  if [[ "${os}" = "Windows" ]]; then
+    unzip "${archive}"
+  else
+    tar -xzf "${archive}"
+  fi
+  install trivy "${TRIVY_PATH}"
+  cd "${PREV_DIR}" || exit
 echo '::endgroup::'
 
 echo "::group:: Installing trivy (${INPUT_TRIVY_VERSION}) ... https://github.com/aquasecurity/trivy"
@@ -62,7 +95,6 @@ echo "::group:: Installing trivy (${INPUT_TRIVY_VERSION}) ... https://github.com
   cd "${TEMP_DOWNLOAD_PATH}" || exit
 
   archive="trivy.${archive_extension}"
-  echo "Downloading trivy ${INPUT_TRIVY_VERSION} for ${os} ${arch} (${archive}) ..."
   if [[ "${INPUT_TRIVY_VERSION}" = "latest" ]]; then
     # latest release is available on this url.
     # document: https://docs.github.com/en/repositories/releasing-projects-on-github/linking-to-releases
@@ -73,13 +105,12 @@ echo "::group:: Installing trivy (${INPUT_TRIVY_VERSION}) ... https://github.com
   fi
   release_num=${release/#v/}
   url="https://github.com/aquasecurity/trivy/releases/download/${release}/trivy_${release_num}_${os}-${arch}.${archive_extension}"
-  # Echo url for testing
-  echo "Downloading ${url} to ${archive}"
+  echo "Downloading ${url} to ${archive}" # TODO: Remove (Echo url for testing)
   curl --silent --show-error --fail \
     --location "${url}" \
     --output "${archive}"
 
-  ### TEST
+  ### TODO: Remove (TEST)
   echo "URL: ${url}"
   echo "ARCHIVE: ${archive}"
   ls 
