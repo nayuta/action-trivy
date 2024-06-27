@@ -192,6 +192,7 @@ jobs:
           reporter: github-check
           level: info
           working_directory: testdata/with_detections
+          runner_debug: true
 
       # The check is expected to fail on the test data
       - name: Check return codes

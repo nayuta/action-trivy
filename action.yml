@@ -66,6 +66,11 @@ inputs:
       Default is blank.
     default: ''
     required: false
+  runner_debug:
+    description: |
+      Enable debug mode for runner
+    default: 'false'
+    required: false
 
 outputs:
   trivy-return-code:
@@ -99,6 +104,7 @@ runs:
         INPUT_TRIVY_COMMAND: ${{ inputs.trivy_command }}
         INPUT_TRIVY_TARGET: ${{ inputs.trivy_target }}
         INPUT_TRIVY_FLAGS: ${{ inputs.trivy_flags }}
+        INPUT_RUNNER_DEBUG: ${{ inputs.runner_debug }}
 
 branding:
   icon: 'edit'
