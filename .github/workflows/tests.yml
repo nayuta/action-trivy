@@ -67,6 +67,7 @@ jobs:
           reporter: github-check
           level: info
           working_directory: testdata/without_detections
+          flags: -tee
 
       # The check is expected to fail on the test data
       - name: Check return codes
