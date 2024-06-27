@@ -103,7 +103,7 @@ jobs:
           github_token: ${{ secrets.github_token }}
           trivy_command: config
           trivy_target: .
-          reporter: github-check
+          reporter: github-pr-review
           level: info
           working_directory: testdata/with_detections
           filter_mode: nofilter
