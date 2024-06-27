@@ -45,6 +45,12 @@ inputs:
     description: 'Additional reviewdog flags'
     default: ''
     required: false
+  reviewdog_version:
+    description: |
+      The version of reviewdog to install.
+      Default is latest.
+    default: 'latest'
+    required: false
   trivy_command:
     description: |
       Trivy command [aws,config,filesystem,image,kubernetes,rootfs,sbom,vm]
@@ -66,6 +72,10 @@ inputs:
       Default is blank.
     default: ''
     required: false
+  runner_debug:
+    description: 'Enable debug mode'
+    default: 'false'
+    required: false
 
 outputs:
   trivy-return-code:
@@ -82,9 +92,6 @@ runs:
       id: trivy
       shell: bash
       env:
-        # We may want to allow specifying reviewdog version as
-        # action's input, but let's start with hard coded latest stable version for reviewdog
-        REVIEWDOG_VERSION: v0.18.1
         # INPUT_<VARIABLE_NAME> is not available in Composite run steps
         # https://github.community/t/input-variable-name-is-not-available-in-composite-run-steps/127611
         INPUT_GITHUB_TOKEN: ${{ inputs.github_token }}
@@ -95,10 +102,12 @@ runs:
         INPUT_FILTER_MODE: ${{ inputs.filter_mode }}
         INPUT_FAIL_ON_ERROR: ${{ inputs.fail_on_error }}
         INPUT_FLAGS: ${{ inputs.flags }}
+        INPUT_REVIEWDOG_VERSION: ${{ inputs.reviewdog_version }}
         INPUT_TRIVY_VERSION: ${{ inputs.trivy_version }}
         INPUT_TRIVY_COMMAND: ${{ inputs.trivy_command }}
         INPUT_TRIVY_TARGET: ${{ inputs.trivy_target }}
         INPUT_TRIVY_FLAGS: ${{ inputs.trivy_flags }}
+        INPUT_RUNNER_DEBUG: ${{ inputs.runner_debug }}
 
 branding:
   icon: 'edit'

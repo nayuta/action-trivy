@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Print commands for debugging
-if [[ "$RUNNER_DEBUG" = "1" ]]; then
+if [[ -n "${INPUT_RUNNER_DEBUG}" && "${INPUT_RUNNER_DEBUG}" = "true" ]]; then
   set -x
 fi
 
@@ -22,6 +22,7 @@ cd "${GITHUB_WORKSPACE}/${INPUT_WORKING_DIRECTORY}" || exit
 
 echo '::group::Preparing ...'
   unameOS="$(uname -s)"
+  echo "unameOS=${unameOS}"
   case "${unameOS}" in
     Linux*)     os=Linux;;
     Darwin*)    os=macOS;;
@@ -37,7 +38,7 @@ echo '::group::Preparing ...'
     arm64)     arch=ARM64;;
     *)         echo "Unsupported architecture: ${unameArch}. Only AMD64 and ARM64 are supported by the action" && exit 1
     esac
-
+  
   case "${os}" in 
     Windows)   archive_extension="zip";;
     *)         archive_extension="tar.gz";;
@@ -49,8 +50,59 @@ echo '::group::Preparing ...'
   TRIVY_PATH="${TEMP_PATH}/trivy"
 echo '::endgroup::'
 
-echo "::group::🐶 Installing reviewdog (${REVIEWDOG_VERSION}) ... https://github.com/reviewdog/reviewdog"
-  curl -sfL https://raw.githubusercontent.com/reviewdog/reviewdog/master/install.sh | sh -s -- -b "${REVIEWDOG_PATH}" "${REVIEWDOG_VERSION}" 2>&1
+echo "::group::🐶 Installing reviewdog (${INPUT_REVIEWDOG_VERSION}) ... https://github.com/reviewdog/reviewdog"
+  test ! -d "${REVIEWDOG_PATH}" && install -d "${REVIEWDOG_PATH}"
+
+echo "1"
+  PREV_DIR=$(pwd)
+  TEMP_DOWNLOAD_PATH="$(mktemp -d)"
+  cd "${TEMP_DOWNLOAD_PATH}" || exit
+
+echo "2"
+  archive="reviewdog.${archive_extension}"
+  if [[ "${INPUT_REVIEWDOG_VERSION}" = "latest" ]]; then
+    # latest release is available on this url.
+    # document: https://docs.github.com/en/repositories/releasing-projects-on-github/linking-to-releases
+    latest_url="https://github.com/reviewdog/reviewdog/releases/latest/"
+echo "2.1"
+curl -h
+    curl $latest_url -L -i -o /dev/null -w '%{url_effective}'
+    release=$(curl $latest_url -s -L -I -o /dev/null -w '%{url_effective}' | awk -F'/' '{print $NF}')
+  else
+echo "2.2"
+    release="${INPUT_REVIEWDOG_VERSION}"
+  fi
+echo "3"
+  release_num=${release/#v/}
+  case "${os}" in
+    Linux)   reviewdog_os="Linux";;
+    macOS)   reviewdog_os="Darwin";;
+    Windows) reviewdog_os="Windows";;
+    *)       echo "Unsupported OS: ${os}. Only Linux, macOS, and Windows are supported by the action" && exit 1
+  esac
+  case "${arch}" in
+    64bit) reviewdog_arch="x86_64";;
+    ARM64) reviewdog_arch="arm64";;
+    *)     echo "Unsupported architecture: ${unameArch}. Only AMD64 and ARM64 are supported by the action" && exit 1
+  esac
+  url="https://github.com/reviewdog/reviewdog/releases/download/${release}/reviewdog_${release_num}_${reviewdog_os}_${reviewdog_arch}.${archive_extension}"
+  echo "Downloading ${url} to ${archive}" # TODO: Remove (Echo url for testing)
+  curl --silent --show-error --fail \
+    --location "${url}" \
+    --output "${archive}"
+
+  ### TODO: Remove (TEST)
+  echo "URL: ${url}"
+  echo "ARCHIVE: ${archive}"
+  ls 
+  ### TEST END
+  if [[ "${os}" = "Windows" ]]; then
+    unzip "${archive}"
+  else
+    tar -xzf "${archive}"
+  fi
+  install reviewdog "${REVIEWDOG_PATH}"
+  cd "${PREV_DIR}" || exit
 echo '::endgroup::'
 
 echo "::group:: Installing trivy (${INPUT_TRIVY_VERSION}) ... https://github.com/aquasecurity/trivy"
@@ -71,13 +123,12 @@ echo "::group:: Installing trivy (${INPUT_TRIVY_VERSION}) ... https://github.com
   fi
   release_num=${release/#v/}
   url="https://github.com/aquasecurity/trivy/releases/download/${release}/trivy_${release_num}_${os}-${arch}.${archive_extension}"
-  # Echo url for testing
-  echo "Downloading ${url} to ${archive}"
+  echo "Downloading ${url} to ${archive}" # TODO: Remove (Echo url for testing)
   curl --silent --show-error --fail \
     --location "${url}" \
     --output "${archive}"
 
-  ### TEST
+  ### TODO: Remove (TEST)
   echo "URL: ${url}"
   echo "ARCHIVE: ${archive}"
   ls 
