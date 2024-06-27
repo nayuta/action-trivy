@@ -104,9 +104,10 @@ jobs:
           trivy_command: config
           trivy_target: .
           reporter: github-pr-review
-          level: info
+          level: debug
           working_directory: testdata/with_detections
           filter_mode: nofilter
+          flags: -tee
 
       # The check is expected to fail on the test data
       - name: Check return codes
