@@ -67,7 +67,7 @@ echo "::group::🐶 Installing reviewdog (${INPUT_REVIEWDOG_VERSION}) ... https:
     release="${INPUT_REVIEWDOG_VERSION}"
   fi
   release_num=${release/#v/}
-  url="https://github.com/reviewdog/reviewdog/releases/download/${release}/trivy_${release_num}_${os}_${arch}.${archive_extension}"
+  url="https://github.com/reviewdog/reviewdog/releases/download/${release}/reviewdog_${release_num}_${os}_${arch}.${archive_extension}"
   echo "Downloading ${url} to ${archive}" # TODO: Remove (Echo url for testing)
   curl --silent --show-error --fail \
     --location "${url}" \
