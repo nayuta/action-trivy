@@ -28,6 +28,8 @@ jobs:
           reporter: github-check
           level: info
           working_directory: testdata/with_detections
+          flags: -tee # Add debug flag to reviewdog
+
 
       # The check is expected to fail on the test data
       - name: Check return codes
