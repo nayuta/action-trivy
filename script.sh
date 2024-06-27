@@ -66,7 +66,7 @@ echo "2"
     latest_url="https://github.com/reviewdog/reviewdog/releases/latest/"
 echo "2.1"
 curl -h
-    curl $latest_url -L -I -o /dev/null -w '%{url_effective}'
+    curl $latest_url -L -i -o /dev/null -w '%{url_effective}'
     release=$(curl $latest_url -s -L -I -o /dev/null -w '%{url_effective}' | awk -F'/' '{print $NF}')
   else
 echo "2.2"
