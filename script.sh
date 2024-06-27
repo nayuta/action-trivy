@@ -104,7 +104,7 @@ echo '::group:: Running trivy with reviewdog 🐶 ...'
   # shellcheck disable=SC2086
   "${TRIVY_PATH}/trivy" --format json ${INPUT_TRIVY_FLAGS:-} --exit-code 1 ${INPUT_TRIVY_COMMAND} ${INPUT_TRIVY_TARGET} 2> /dev/null \
     | jq -r -f "${GITHUB_ACTION_PATH}/to-rdjson.jq" \
-    |  "${REVIEWDOG_PATH}/reviewdog" -f=rdjson \
+    |  reviewdog -f=rdjson \
         -name="${INPUT_TOOL_NAME}" \
         -reporter="${INPUT_REPORTER}" \
         -level="${INPUT_LEVEL}" \
