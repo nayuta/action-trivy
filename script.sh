@@ -88,7 +88,7 @@ echo "::group::🐶 Installing reviewdog (${INPUT_REVIEWDOG_VERSION}) ... https:
   else
     tar -xzf "${archive}"
   fi
-  install reviewdog "${TRIVY_PATH}"
+  install reviewdog "${REVIEWDOG_PATH}"
   cd "${PREV_DIR}" || exit
 echo '::endgroup::'
 
