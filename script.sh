@@ -38,7 +38,7 @@ echo '::group::Preparing ...'
     arm64)     arch=ARM64;;
     *)         echo "Unsupported architecture: ${unameArch}. Only AMD64 and ARM64 are supported by the action" && exit 1
     esac
-
+  
   case "${os}" in 
     Windows)   archive_extension="zip";;
     *)         archive_extension="tar.gz";;
@@ -67,7 +67,12 @@ echo "::group::🐶 Installing reviewdog (${INPUT_REVIEWDOG_VERSION}) ... https:
     release="${INPUT_REVIEWDOG_VERSION}"
   fi
   release_num=${release/#v/}
-  url="https://github.com/reviewdog/reviewdog/releases/download/${release}/reviewdog_${release_num}_${os}_${arch}.${archive_extension}"
+  case "${arch}" in
+    64bit) reviewdog_arch="x86_64";;
+    ARM64) reviewdog_arch="arm64";;
+    *)     echo "Unsupported architecture: ${unameArch}. Only AMD64 and ARM64 are supported by the action" && exit 1
+  esac
+  url="https://github.com/reviewdog/reviewdog/releases/download/${release}/reviewdog_${release_num}_${os}_${reviewdog_arch}.${archive_extension}"
   echo "Downloading ${url} to ${archive}" # TODO: Remove (Echo url for testing)
   curl --silent --show-error --fail \
     --location "${url}" \
