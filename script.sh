@@ -45,12 +45,7 @@ echo '::group::Preparing ...'
 
   TEMP_PATH="$(mktemp -d)"
   echo "Detected ${os} running on ${arch}, will install tools in ${TEMP_PATH}"
-  REVIEWDOG_PATH="${TEMP_PATH}/reviewdog"
   TRIVY_PATH="${TEMP_PATH}/trivy"
-echo '::endgroup::'
-
-echo "::group::🐶 Installing reviewdog (${REVIEWDOG_VERSION}) ... https://github.com/reviewdog/reviewdog"
-  curl -sfL https://raw.githubusercontent.com/reviewdog/reviewdog/master/install.sh | sh -s -- -b "${REVIEWDOG_PATH}" "${REVIEWDOG_VERSION}" 2>&1
 echo '::endgroup::'
 
 echo "::group:: Installing trivy (${INPUT_TRIVY_VERSION}) ... https://github.com/aquasecurity/trivy"
@@ -103,7 +98,7 @@ echo '::group:: Running trivy with reviewdog 🐶 ...'
 
   # shellcheck disable=SC2086
   "${TRIVY_PATH}/trivy" --format sarif ${INPUT_TRIVY_FLAGS:-} --exit-code 1 ${INPUT_TRIVY_COMMAND} ${INPUT_TRIVY_TARGET} 2> /dev/null \
-    |  "${REVIEWDOG_PATH}/reviewdog" -f=sarif \
+    |  reviewdog -f=sarif \
         -name="${INPUT_TOOL_NAME}" \
         -reporter="${INPUT_REPORTER}" \
         -level="${INPUT_LEVEL}" \
