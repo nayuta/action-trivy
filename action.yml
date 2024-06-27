@@ -72,6 +72,10 @@ inputs:
       Default is blank.
     default: ''
     required: false
+  runner_debug:
+    description: 'Enable debug mode'
+    default: 'false'
+    required: false
 
 outputs:
   trivy-return-code:
@@ -88,9 +92,6 @@ runs:
       id: trivy
       shell: bash
       env:
-        # We may want to allow specifying reviewdog version as
-        # action's input, but let's start with hard coded latest stable version for reviewdog
-        REVIEWDOG_VERSION: v0.18.1
         # INPUT_<VARIABLE_NAME> is not available in Composite run steps
         # https://github.community/t/input-variable-name-is-not-available-in-composite-run-steps/127611
         INPUT_GITHUB_TOKEN: ${{ inputs.github_token }}
@@ -106,6 +107,7 @@ runs:
         INPUT_TRIVY_COMMAND: ${{ inputs.trivy_command }}
         INPUT_TRIVY_TARGET: ${{ inputs.trivy_target }}
         INPUT_TRIVY_FLAGS: ${{ inputs.trivy_flags }}
+        INPUT_RUNNER_DEBUG: ${{ inputs.runner_debug }}
 
 branding:
   icon: 'edit'
